@@ -15,6 +15,16 @@
 <body>
     <h2>User Info</h2>
     <p><a href="/users/create">Create User</a></p>
+    <jstl:forEach begin="1" end="${totalPages}" varStatus="loop">
+        <jstl:choose>
+            <jstl:when test="${loop.current != currentPage}">
+                <a href="/home?page=${loop.current}">${loop.current}</a>
+            </jstl:when>
+            <jstl:when test="${loop.current == currentPage}">
+                <b><a href="javascript:void(0)">${loop.current}</a></b>
+            </jstl:when>
+        </jstl:choose>
+    </jstl:forEach>
     <table border="1">
         <tr>
             <th>ID</th>
@@ -37,5 +47,15 @@
         </jstl:forEach>
         </tbody>
     </table>
+    <jstl:forEach begin="1" end="${totalPages}" varStatus="loop">
+        <jstl:choose>
+            <jstl:when test="${loop.current != currentPage}">
+                <a href="/home?page=${loop.current}">${loop.current}</a>
+            </jstl:when>
+            <jstl:when test="${loop.current == currentPage}">
+                <b><a href="javascript:void(0)">${loop.current}</a></b>
+            </jstl:when>
+        </jstl:choose>
+    </jstl:forEach>
 </body>
 </html>

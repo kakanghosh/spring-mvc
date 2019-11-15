@@ -2,6 +2,7 @@ package com.helloworld.springmvcdemo.dao;
 
 import com.helloworld.springmvcdemo.models.User;
 import com.helloworld.springmvcdemo.repo.SimpleCrud;
+import com.helloworld.springmvcdemo.repo.SimplePagination;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -9,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class UserDao implements SimpleCrud<User>, RowMapper<User> {
+public class UserDao implements SimpleCrud<User>, SimplePagination<User>, RowMapper<User> {
 
     private JdbcTemplate jdbcTemplate;
 
@@ -63,5 +64,19 @@ public class UserDao implements SimpleCrud<User>, RowMapper<User> {
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
         return getUserFromResultSet(rs);
+    }
+
+    @Override
+    public List<User> findAllByPagination(int page, int itemPerPage) {
+        final String SQL_QUERY = "SELECT * FROM users LIMIT "+page+", "+itemPerPage+";";
+        return jdbcTemplate.query(SQL_QUERY, this);
+    }
+
+    @Override
+    public int findTotalPages(int itemPerPage) {
+        final String SQL_QUERY = "SELECT COUNT(*) FROM users;";
+        final int totalRow = jdbcTemplate.query(SQL_QUERY, (resultSet, i) -> resultSet.getInt(1)).get(0);
+        final int totalPages = (totalRow / itemPerPage);
+        return (totalRow % itemPerPage) > 0 ? totalPages + 1 : totalPages;
     }
 }
